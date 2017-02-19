@@ -1,0 +1,29 @@
+{
+  "name": "vue-parallax-js",
+  "version": "0.0.1",
+  "description": "Vue component for easy parallax with directive",
+  "main": "vue-parallax-js.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsnanigans/vue-parallax-js.git"
+  },
+  "keywords": [
+    "vue",
+    "vue",
+    "2",
+    "parallax",
+    "vue-component"
+  ],
+  "author": "Brendan Mullins <megamaaaan@gmail.com> (https://github.com/jsnanigans)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsnanigans/vue-parallax-js/issues"
+  },
+  "homepage": "https://github.com/jsnanigans/vue-parallax-js#readme"
+}

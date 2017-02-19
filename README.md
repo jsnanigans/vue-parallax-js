@@ -2,7 +2,8 @@
 vue component for parallax effect on elements.
 - no dependencies.
 - for Vue.js 2
-- in alpha
+- lightweight
+- 1.6 kb minified
 
 ##Setup
 ```bash
