@@ -28,5 +28,5 @@ when everything is setup you can use the directive like this:
 <h1 v-parallax="0.2">vue-parallax-js</h1>
 ```
 
-##Options and Arguments
-see [documentation](https://jsnanigans.github.io/vue-parallax-js/#options)
+##Options and Modifiers
+see [documentation](https://jsnanigans.github.io/vue-parallax-js/)

@@ -1,6 +1,6 @@
 {
   "name": "vue-parallax-js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Vue component for easy parallax with directive",
   "main": "vue-parallax-js.js",
   "directories": {
