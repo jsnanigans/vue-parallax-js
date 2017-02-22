@@ -7,7 +7,7 @@ parallaxjs.prototype = {
   active: true,
 
   setStyle: function setStyle(item, value) {
-    if (item.arg === 'centerX') value += ' translateX(-50%)';
+    if (item.modifiers.centerX) value += ' translateX(-50%)';
 
     var el = item.el;
     var prop = 'Transform';
@@ -20,13 +20,15 @@ parallaxjs.prototype = {
     var arg = binding.arg;
     var style = el.currentStyle || window.getComputedStyle(el);
 
+    var height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
     this.items.push({
       el: el,
       initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
       style: style,
       value: value,
       arg: arg,
-      clientHeight: el.clientHeight || el.offsetHeight || el.scrollHeight,
+      modifiers: binding.modifiers,
+      clientHeight: height,
       count: 0
     });
   },
@@ -49,10 +51,11 @@ parallaxjs.prototype = {
     this.items.map(function (item) {
       var pos = scrollTop + windowHeight;
       var elH = item.clientHeight;
-      if (item.count > 50) {
-        item.count = 0;
-        elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight;
-      }
+      // if (item.count > 50) {
+      //   item.count = 0;
+      //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
+      // }
+
 
       pos = pos - elH / 2;
       pos = pos - windowHeight / 2;
@@ -65,7 +68,7 @@ parallaxjs.prototype = {
 
       pos = pos.toFixed(2);
 
-      item.count++;
+      // item.count++
       _this.setStyle(item, 'translateY(' + pos + 'px)');
     });
   }

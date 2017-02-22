@@ -7,7 +7,7 @@ parallaxjs.prototype = {
   active: true,
 
   setStyle (item, value) {
-    if (item.arg === 'centerX')
+    if (item.modifiers.centerX)
       value += ' translateX(-50%)'
 
     let el = item.el;
@@ -22,13 +22,15 @@ parallaxjs.prototype = {
     let arg = binding.arg
     let style = el.currentStyle || window.getComputedStyle(el);
 
+    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
     this.items.push({
       el: el,
       initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
       style,
       value,
       arg,
-      clientHeight: el.clientHeight || el.offsetHeight || el.scrollHeight,
+      modifiers: binding.modifiers,
+      clientHeight: height,
       count: 0
     })
   },
@@ -50,10 +52,10 @@ parallaxjs.prototype = {
     this.items.map((item) => {
         let pos = (scrollTop + windowHeight)
         let elH = item.clientHeight
-        if (item.count > 50) {
-          item.count = 0;
-          elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-        }
+        // if (item.count > 50) {
+        //   item.count = 0;
+        //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
+        // }
 
 
         pos = pos - (elH / 2)
@@ -67,7 +69,7 @@ parallaxjs.prototype = {
 
         pos = pos.toFixed(2)
 
-        item.count++
+        // item.count++
         this.setStyle(item, 'translateY(' + pos + 'px)')
     })
   }
