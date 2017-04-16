@@ -1,9 +1,11 @@
+#BETA
+- values range changed from 0-1 to 0-10
+- you can define "percentage" like this: v-parallax="{speed: 3, percentage: 1}"  more more fine control
+
 #vue-parallax-js
 vue component for parallax effect on elements.
 - no dependencies.
-- for Vue.js 2
 - lightweight
-- 1.6 kb minified
 
 ##Setup
 ```bash
@@ -25,7 +27,7 @@ Vue.use(VueParallaxJs)
 ##Usage
 when everything is setup you can use the directive like this:
 ```html
-<h1 v-parallax="0.2">vue-parallax-js</h1>
+<h1 v-parallax="2">vue-parallax-js</h1>
 ```
 
 ##Options and Modifiers
