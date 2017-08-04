@@ -52,11 +52,6 @@ parallaxjs.prototype = {
     this.items.map((item) => {
         let pos = (scrollTop + windowHeight)
         let elH = item.clientHeight
-        // if (item.count > 50) {
-        //   item.count = 0;
-        //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-        // }
-
 
         pos = pos - (elH / 2)
         pos = pos - (windowHeight / 2)
@@ -69,13 +64,12 @@ parallaxjs.prototype = {
 
         pos = pos.toFixed(2)
 
-        // item.count++
         this.setStyle(item, 'translateY(' + pos + 'px)')
     })
   }
 }
 
-export default {
+let VueParallaxJs = {
   install (Vue, options = {}) {
     var p = new parallaxjs(options)
 
@@ -99,16 +93,8 @@ export default {
         p.add(el, binding)
         p.move(p)
       },
-      // unbind(el, binding) {
-      //   p.remove(el)
-      // }
-      // bind: parallaxjs.add(parallaxjs),
-      // update(value) {
-      //  parallaxjs.update(value)
-      // },
-      // update(el, binding) {
-      //   console.log("cup");
-      // },
     })
   }
 }
+
+ module.exports = VueParallaxJs
