@@ -1,3 +1,7 @@
+'use strict';
+
+'use strict';
+
 var parallaxjs = function parallaxjs(options) {
   this.options = options;
 };
@@ -46,8 +50,6 @@ parallaxjs.prototype = {
 
     var scrollTop = window.scrollY || window.pageYOffset;
     var windowHeight = window.innerHeight;
-    var windowWidth = window.innerWidth;
-
     this.items.map(function (item) {
       var pos = scrollTop + windowHeight;
       var elH = item.clientHeight;
@@ -97,4 +99,15 @@ var VueParallaxJs = {
   }
 };
 
-module.exports = VueParallaxJs;
+// import Vue and vue-parallax-js
+// add vue-parallax-js to vue
+Vue.use(VueParallaxJs);
+
+new Vue({
+  el: '#app',
+  data: function data() {
+    return {
+      asd: 'qwe'
+    };
+  }
+});
