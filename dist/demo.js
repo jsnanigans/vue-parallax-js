@@ -1,3 +1,7 @@
+'use strict';
+
+'use strict';
+
 var parallaxjs = function parallaxjs(options) {
   this.options = options;
 };
@@ -46,16 +50,9 @@ parallaxjs.prototype = {
 
     var scrollTop = window.scrollY || window.pageYOffset;
     var windowHeight = window.innerHeight;
-    var windowWidth = window.innerWidth;
-
     this.items.map(function (item) {
       var pos = scrollTop + windowHeight;
       var elH = item.clientHeight;
-      // if (item.count > 50) {
-      //   item.count = 0;
-      //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-      // }
-
 
       pos = pos - elH / 2;
       pos = pos - windowHeight / 2;
@@ -68,13 +65,12 @@ parallaxjs.prototype = {
 
       pos = pos.toFixed(2);
 
-      // item.count++
       _this.setStyle(item, 'translateY(' + pos + 'px)');
     });
   }
 };
 
-export default {
+var VueParallaxJs = {
   install: function install(Vue) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -102,3 +98,16 @@ export default {
     });
   }
 };
+
+// import Vue and vue-parallax-js
+// add vue-parallax-js to vue
+Vue.use(VueParallaxJs);
+
+new Vue({
+  el: '#app',
+  data: function data() {
+    return {
+      asd: 'qwe'
+    };
+  }
+});
