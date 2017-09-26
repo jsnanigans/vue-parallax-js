@@ -1,11 +1,11 @@
-#vue-parallax-js
+# vue-parallax-js
 vue component for parallax effect on elements.
 - no dependencies.
 - for Vue.js 2
 - lightweight
 - 1.6 kb minified
 
-##Setup
+## Setup
 ```bash
 npm install --save vue-parallax-js
 # or use yarn
@@ -22,11 +22,11 @@ import VueParallaxJs from 'vue-parallax-js'
 Vue.use(VueParallaxJs)
 ```
 
-##Usage
+## Usage
 when everything is setup you can use the directive like this:
 ```html
 <h1 v-parallax="0.2">vue-parallax-js</h1>
 ```
 
-##Options and Modifiers
+## Options and Modifiers
 see [documentation](https://jsnanigans.github.io/vue-parallax-js/)
