@@ -1,13 +1,18 @@
-var parallaxjs = function parallaxjs(options) {
+let parallaxjs = function (options = {}) {
 
-  var posY = 0 // set it to -1 so the animate function gets called at least once
-  var screenY = 0
-  var pause = false
+  // options = {
+  //   ...options
+  // }
 
-  this.loop = window.requestAnimationFrame || function(cb) {setTimeout(cb, 1000/60)}
+  let pause = false
+  let elements = []
+  let screenY
+  let posY
+  let oldY
+  let api = {}
 
-  // check which transform property to use
-  this.transformProp = window.transformProp || (function(){
+  // helper functions
+  const transformProp = window.transformProp || (function(){
     var testEl = document.createElement('div');
     if (testEl.style.transform == null) {
       var vendors = ['Webkit', 'Moz', 'ms'];
@@ -18,158 +23,185 @@ var parallaxjs = function parallaxjs(options) {
       }
     }
     return 'transform';
-  })()
+  })();
 
-  this.clamp = function(num, min, max) {
-    return (num <= min) ? min : ((num >= max) ? max : num);
+  let rqaf = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    window.oRequestAnimationFrame
+
+  let clamp = (v, min, max) => v
+
+  api.loop = rqaf ? rqaf.bind(window) : _ => { setTimeout(_, 1000 / 60) }
+
+  api.setPageY = _ => {
+    screenY = window.innerHeight;
   }
 
-  this.options = {
-    speed: -2,
-    center: false,
-    round: true,
-    callback: function() {},
-    ...options
-  }
+  api.setPageScroll = _ => {
+    var oldY = posY;
 
-  this.options.speed = this.clamp(this.options.speed, -10, 10)
-
-  this.elements = []
-
-  this.init = _ => {
-    screenY = window.innerHeight
-    this.setPosition()
-
-    this.elements.forEach(el => {
-      blocks.push(this.createBlock(el))
-    })
-
-    window.addEventListener('resize', _ => {
-      this.animate()
-    })
-
-    this.update()
-
-    this.animate()
-  }
-
-  this.createBlock = el => {
-    let dataPercentage = 0
-    let dataSpeed = 0
-    let dataZindex = 0
-
-    let posY = dataPercentage || self.options.center ? (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) : 0
-
-    let blockTop = posY + el.getBoundingClientRect().top
-    let blockHeight = el.clientHeight || el.offsetHeight || el.scrollHeight
-
-    let percentage = dataPercentage ? dataPercentage : (posY - blockTop + screenY) / (blockHeight + screenY)
-    if(self.options.center){ percentage = 0.5 }
-
-    let speed
-    if (dataPercentage || this.options.center) {
-      speed = clamp(dataSpeed || this.options.speed, -5, 5)
+    if (window.pageYOffset !== undefined) {
+      posY = window.pageYOffset;
     } else {
-      speed = dataSpeed ? this.clamp(dataSpeed, -10, 10) : this.options.speed
+      posY = (document.documentElement || document.body.parentNode || document.body).scrollTop;
     }
 
-    let base = this.updatePosition(percentage, speed)
+    if (oldY != posY) {
+      // scroll changed, return true
+      return true;
+    }
 
-    let style = el.style.cssText
-    let transform = ''
+    // scroll did not change
+    return false;
+  }
+
+  api.addElement = (el, binding) => {
+    let opt = {
+      speed: -2,
+      center: false,
+      round: true,
+      callback: _ => {},
+      percentage: false,
+      zindex: 0,
+    }
+
+    if (typeof binding.value === 'number')
+      opt.speed = binding.value
+
+    // console.log(binding)
+
+    var posY = opt.percentage || opt.center ? (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) : 0;
+    var blockTop = posY + el.getBoundingClientRect().top;
+    var blockHeight = el.clientHeight || el.offsetHeight || el.scrollHeight;
+    var percentage = opt.percentage ? opt.percentage : (posY - blockTop + screenY) / (blockHeight + screenY);
+    if(opt.center){ percentage = 0.5; }
+    
+    var speed = opt.speed ? clamp(opt.speed, -10, 10) : opt.speed;
+    if (opt.percentage || opt.center) {
+      speed = clamp(opt.speed || opt.speed, -5, 5);
+    }
+
+    var base = updatePosition(percentage, speed, opt.round);
+
+    var style = el.style.cssText
+    var transform = ''
+
+    // console.log({e: el.style})
+    let computed = getComputedStyle(el, null)
+    console.log(computed.getPropertyValue('transform'))
+
 
     if (style.indexOf('transform') !== -1) {
-      let index = style.indexOf('transform')
-      let trimmedStyle = style.slice(index)
-      let delimiter = trimmedStyle.indexOf(';')
+      // Get the index of the transform
+      var index = style.indexOf('transform');
 
+      // Trim the style to the transform point and get the following semi-colon index
+      var trimmedStyle = style.slice(index);
+      var delimiter = trimmedStyle.indexOf(';');
+
+      // Remove "transform" string and save the attribute
       if (delimiter) {
-        transform = ' ' + trimmedStyle.slice(11, delimiter).replace(/\s/g, '')
+        transform = ' ' + trimmedStyle.slice(11, delimiter).replace(/\s/g,'');
       } else {
-        transform = " " + trimmedStyle.slice(11).replace(/\s/g,'')
+        transform = ' ' + trimmedStyle.slice(11).replace(/\s/g,'');
       }
+
+      
     }
 
-    return {
+    elements.push({
+      el,
       base,
+      top: blockTop,
+      height: blockHeight,
       speed,
       style,
       transform,
-      top: blockTop,
-      height: blockHeight,
-      zIndex: dataZindex
-    }
+      zindex: opt.zindex,
+      opt
+    })
+
+    // elements.push(el)
   }
 
-  this.setPosition = _ => {
-    let oldY = posY
-
-    if (window.pageYOffset !== undefined) {
-      posY = window.pageXOffset 
-    } else {
-      posY = (document.documentElement || document.body.parentNode || document.body).scrollTop
-    }
-
-    if (oldY !== posY) {
-      return true
-    }
-
-    return false
+  var updatePosition = function(percentage, speed, round) {
+    var value = (speed * (100 * (1 - percentage)));
+    return round ? Math.round(value * 10) / 10 : value;
   }
 
-  this.updatePosition = (percentage, speed) => {
-    var value = (speed * (100 * (1 - percentage)))
-    return this.options.round ? Math.round(value * 10) / 10 : value
-  }
-
-  this.update = _ => {
-    if (this.setPosition() && pause === false) {
-      this.animate()
+  api.animate = id => {
+    let targets = elements
+    if (typeof id === 'number') {
+      targets = [elements[id]]
     }
 
-    this.loop(this.update)
-  }
+    if (!targets)
+      return
 
-  this.animate = _ => {
-    this.elements.forEach((item, i) => {
-      let percentage = ((posY - blocks[i].top + screenY) / (blocks[i].height + screenY))
-      let position = this.updatePosition(percentage, blocks[i].speed) - blocks[i].base
-      let zindex = blocks[i].zindex
+    targets.forEach(item => {
+      // console.log(item)
+      var percentage = ((posY - item.top + screenY) / (item.height + screenY));
+      
+      var position = updatePosition(percentage, item.speed, item.opt.round) - item.base;
 
-      let translate = 'translate3d(0,' + position + 'px,' + zindex + 'px) ' + blocks[i].transform
-      this.elems[i].style[transformProp] = translate
+      var zindex = item.zindex;
+
+      var translate = 'translate3d(0,' + position + 'px,' + zindex + 'px) ' + item.transform;
+      item.el.style[transformProp] = translate
+      // item.el.style['backfaceVisibility'] = 'hidden'
     })
   }
-};
+
+  return api
+}
 
 
-var VueParallaxJs = {
-  install: function install(Vue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+export default {
+  install (Vue, options = {}) {
+    var p = parallaxjs(options)
+    p.setPageScroll()
+    p.setPageY()
+    
+    window.addEventListener('scroll', () => {
+      p.loop(_ => {
+        p.loop(_ => {
+          p.setPageScroll()
+          p.animate()
+        })
+      })
+    }, {passive: true})
+    window.addEventListener('resize', () => {
+      p.loop(_ => {
+        p.loop(_ => {
+          p.setPageScroll()
+          p.setPageY()
+          p.animate()
+        })
+      })
+    }, {passive: true})
 
-    var p = new parallaxjs(options);
+    Vue.prototype.$parallaxjs = p
+    window.$parallaxjs = p
 
-    window.addEventListener('scroll', function () {
-      requestAnimationFrame(function () {
-        p.move(p);
-      });
-    }, { passive: true });
-    window.addEventListener('resize', function () {
-      requestAnimationFrame(function () {
-        p.move(p);
-      });
-    }, { passive: true });
-
-    Vue.prototype.$parallaxjs = p;
-    window.$parallaxjs = p;
     Vue.directive('parallax', {
-      bind: function bind(el, binding) {},
-      inserted: function inserted(el, binding) {
-        p.add(el, binding);
-        p.move(p);
-      }
-    });
+      bind (el, binding) {
+      },
+      inserted (el, binding) {
+        let id = p.addElement(el, binding)
+        p.animate(id)
+      },
+      // unbind(el, binding) {
+      //   p.resetPosition(el)
+      // }
+      // bind: parallaxjs.add(parallaxjs),
+      // update(value) {
+      //  parallaxjs.update(value)
+      // },
+      // update(el, binding) {
+      //   console.log("cup");
+      // },
+    })
   }
-};
-
-module.exports = VueParallaxJs;
+}

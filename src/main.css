@@ -1,0 +1,85 @@
+body {
+  margin: 0
+}
+#app {
+  overflow: hidden;
+}
+
+.ani {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+[v-cloak] .ani {
+  opacity: 0
+}
+
+.screen {
+  height: 100vh;
+  position: relative;
+}
+.screen:nth-child(odd) {
+  color: white;
+}
+.screen:nth-child(odd)::after {
+  position: absolute;
+  content: '';
+  display: block;
+  top: 0;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  background: #000;
+  transform: rotate(5deg)
+}
+.screen:first-child::after {
+  position: absolute;
+  content: '';
+  display: block;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  background: #000;
+  transform: rotate(5deg)
+}
+
+
+.content {
+  font-family: 'Arial';
+  padding: 30px 0;
+  width: 1440px;
+  max-width: calc(100% - 20px);
+  margin: 0 auto;
+  position: relative;
+  z-index: 20;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Fascinate Inline', cursive;
+}
+
+h1 {
+  font-size: 11vw;
+  font-weight: 400;
+  line-height: 1.1;
+}
+@media screen and (min-width: 1440px) {
+  h1 {
+    font-size: 160px;
+  }
+}
+
+.square {
+  /* transform: rotate(-45deg); */
+  border-radius: 50%;
+  background: #bada55;
+  z-index: 10;
+  position: absolute;
+}
+.square::after {
+  display: block;
+  width: 100%;
+  padding-bottom: 100%;
+  content: ''
+}
