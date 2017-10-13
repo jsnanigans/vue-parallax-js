@@ -20,6 +20,8 @@ parallaxjs.prototype = {
     var arg = binding.arg;
     var style = el.currentStyle || window.getComputedStyle(el);
 
+    if (style.display === 'none') return;
+
     var height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
     this.items.push({
       el: el,
@@ -99,6 +101,17 @@ export default {
         p.add(el, binding);
         p.move(p);
       }
-    });
+    }
+    // unbind(el, binding) {
+    //   p.remove(el)
+    // }
+    // bind: parallaxjs.add(parallaxjs),
+    // update(value) {
+    //  parallaxjs.update(value)
+    // },
+    // update(el, binding) {
+    //   console.log("cup");
+    // },
+    );
   }
 };
