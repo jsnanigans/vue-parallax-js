@@ -90,7 +90,15 @@ let parallaxjs = function (options = {}) {
 
     // console.log({e: el.style})
     let computed = getComputedStyle(el, null);
-    console.log(computed.getPropertyValue('transform'));
+    // console.log(computed.getPropertyValue('transform'))
+    let initialMatrix = computed.getPropertyValue('transform');
+    initialMatrix = initialMatrix.replace('matrix(', '');
+    initialMatrix = initialMatrix.replace(')', '');
+    initialMatrix = initialMatrix.split(', ');
+    // console.log(initialMatrix)
+    // let initialTransform = {
+    //   rotate: 
+    // }
 
 
     if (style.indexOf('transform') !== -1) {
@@ -120,7 +128,8 @@ let parallaxjs = function (options = {}) {
       style,
       transform,
       zindex: opt.zindex,
-      opt
+      opt,
+      initialMatrix
     });
 
     // elements.push(el)
@@ -146,11 +155,12 @@ let parallaxjs = function (options = {}) {
       
       var position = updatePosition(percentage, item.speed, item.opt.round) - item.base;
 
-      var zindex = item.zindex;
+      let values = item.initialMatrix;
+      values[5] = position;
 
-      var translate = 'translate3d(0,' + position + 'px,' + zindex + 'px) ' + item.transform;
+      var translate = 'matrix(' + values.join(',') + ')';
       item.el.style[transformProp] = translate;
-      // item.el.style['backfaceVisibility'] = 'hidden'
+      item.el.style.backfaceVisibility = 'hidden';
     });
   };
 
@@ -207,7 +217,6 @@ var VueParallaxJs = {
 };
 
 // import Vue and vue-parallax-js
-// add vue-parallax-js to vue
 Vue.use(VueParallaxJs);
 
 new Vue({
@@ -215,23 +224,9 @@ new Vue({
   data() {
     return {
       title: 'Smooth and Simple Parallax for Vue',
-      lines: [
-        {dots: 1},
-        {dots: 2},
-        {dots: 3},
-        {dots: 4},
-        {dots: 5},
-      ]
     }
   },
 
   created() {
-    this.lines.map(line => {
-      let c = line.dots;
-      line.dots = [];
-      for (let i = 0; i < c; i++) {
-        line.dots.push('');
-      }
-    });
   }
 });

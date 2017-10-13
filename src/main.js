@@ -90,7 +90,15 @@ let parallaxjs = function (options = {}) {
 
     // console.log({e: el.style})
     let computed = getComputedStyle(el, null)
-    console.log(computed.getPropertyValue('transform'))
+    // console.log(computed.getPropertyValue('transform'))
+    let initialMatrix = computed.getPropertyValue('transform')
+    initialMatrix = initialMatrix.replace('matrix(', '')
+    initialMatrix = initialMatrix.replace(')', '')
+    initialMatrix = initialMatrix.split(', ')
+    // console.log(initialMatrix)
+    // let initialTransform = {
+    //   rotate: 
+    // }
 
 
     if (style.indexOf('transform') !== -1) {
@@ -120,7 +128,8 @@ let parallaxjs = function (options = {}) {
       style,
       transform,
       zindex: opt.zindex,
-      opt
+      opt,
+      initialMatrix
     })
 
     // elements.push(el)
@@ -148,9 +157,14 @@ let parallaxjs = function (options = {}) {
 
       var zindex = item.zindex;
 
-      var translate = 'translate3d(0,' + position + 'px,' + zindex + 'px) ' + item.transform;
+      // var translate = 'translate3d(0,' + position + 'px,' + zindex + 'px) ' + item.transform;
+      // var translate = 'matrix(1, 0, 0, 1, 0, ' + position + ')';
+      let values = item.initialMatrix
+      values[5] = position
+
+      var translate = 'matrix(' + values.join(',') + ')';
       item.el.style[transformProp] = translate
-      // item.el.style['backfaceVisibility'] = 'hidden'
+      item.el.style.backfaceVisibility = 'hidden'
     })
   }
 
