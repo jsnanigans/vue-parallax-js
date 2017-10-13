@@ -92,9 +92,13 @@ let parallaxjs = function (options = {}) {
     let computed = getComputedStyle(el, null);
     // console.log(computed.getPropertyValue('transform'))
     let initialMatrix = computed.getPropertyValue('transform');
-    initialMatrix = initialMatrix.replace('matrix(', '');
-    initialMatrix = initialMatrix.replace(')', '');
-    initialMatrix = initialMatrix.split(', ');
+    if (initialMatrix.indexOf('matrix(') === 0) {
+      initialMatrix = initialMatrix.replace('matrix(', '');
+      initialMatrix = initialMatrix.replace(')', '');
+      initialMatrix = initialMatrix.split(', ');
+    } else {
+      initialMatrix = [1, 0, 0, 1, 0, 0];
+    }
     // console.log(initialMatrix)
     // let initialTransform = {
     //   rotate: 

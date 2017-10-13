@@ -72,6 +72,7 @@ h1 {
 
 .square {
   transform: rotate(-45deg);
+  /* transform: translateY(1px); */
   border-radius: 20%;
   background: #bada55;
   z-index: 10;
