@@ -1,40 +1,45 @@
 'use strict';
 
-var parallaxjs = function parallaxjs() {
-  var elements = [];
-  var screenY = void 0;
-  var posY = void 0;
-  var api = {};
+let parallaxjs = function (options = {}) {
+
+  // options = {
+  //   ...options
+  // }
+
+  let elements = [];
+  let screenY;
+  let posY;
+  let api = {};
 
   // helper functions
-  var transformProp = window.transformProp || function () {
+  const transformProp = window.transformProp || (function(){
     var testEl = document.createElement('div');
     if (testEl.style.transform == null) {
       var vendors = ['Webkit', 'Moz', 'ms'];
       for (var vendor in vendors) {
-        if (testEl.style[vendors[vendor] + 'Transform'] !== undefined) {
+        if (testEl.style[ vendors[vendor] + 'Transform' ] !== undefined) {
           return vendors[vendor] + 'Transform';
         }
       }
     }
     return 'transform';
-  }();
+  })();
 
-  var rqaf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
+  let rqaf = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    window.oRequestAnimationFrame;
 
-  var clamp = function clamp(v, min, max) {
-    return v;
-  };
+  let clamp = (v, min, max) => v;
 
-  api.loop = rqaf ? rqaf.bind(window) : function (_) {
-    setTimeout(_, 1000 / 60);
-  };
+  api.loop = rqaf ? rqaf.bind(window) : _ => { setTimeout(_, 1000 / 60); };
 
-  api.setPageY = function (_) {
+  api.setPageY = _ => {
     screenY = window.innerHeight;
   };
 
-  api.setPageScroll = function (_) {
+  api.setPageScroll = _ => {
     var oldY = posY;
 
     if (window.pageYOffset !== undefined) {
@@ -52,28 +57,27 @@ var parallaxjs = function parallaxjs() {
     return false;
   };
 
-  api.addElement = function (el, binding) {
-    var opt = {
+  api.addElement = (el, binding) => {
+    let opt = {
       speed: -2,
       center: false,
       round: true,
-      callback: function callback(_) {},
+      callback: _ => {},
       percentage: false,
-      zindex: 0
+      zindex: 0,
     };
 
-    if (typeof binding.value === 'number') opt.speed = binding.value;
+    if (typeof binding.value === 'number')
+      opt.speed = binding.value;
 
     // console.log(binding)
 
-    var posY = opt.percentage || opt.center ? window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop : 0;
+    var posY = opt.percentage || opt.center ? (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) : 0;
     var blockTop = posY + el.getBoundingClientRect().top;
     var blockHeight = el.clientHeight || el.offsetHeight || el.scrollHeight;
     var percentage = opt.percentage ? opt.percentage : (posY - blockTop + screenY) / (blockHeight + screenY);
-    if (opt.center) {
-      percentage = 0.5;
-    }
-
+    if(opt.center){ percentage = 0.5; }
+    
     var speed = opt.speed ? clamp(opt.speed, -10, 10) : opt.speed;
     if (opt.percentage || opt.center) {
       speed = clamp(opt.speed || opt.speed, -5, 5);
@@ -85,8 +89,9 @@ var parallaxjs = function parallaxjs() {
     var transform = '';
 
     // console.log({e: el.style})
-    var computed = getComputedStyle(el, null);
+    let computed = getComputedStyle(el, null);
     console.log(computed.getPropertyValue('transform'));
+
 
     if (style.indexOf('transform') !== -1) {
       // Get the index of the transform
@@ -98,44 +103,47 @@ var parallaxjs = function parallaxjs() {
 
       // Remove "transform" string and save the attribute
       if (delimiter) {
-        transform = ' ' + trimmedStyle.slice(11, delimiter).replace(/\s/g, '');
+        transform = ' ' + trimmedStyle.slice(11, delimiter).replace(/\s/g,'');
       } else {
-        transform = ' ' + trimmedStyle.slice(11).replace(/\s/g, '');
+        transform = ' ' + trimmedStyle.slice(11).replace(/\s/g,'');
       }
+
+      
     }
 
     elements.push({
-      el: el,
-      base: base,
+      el,
+      base,
       top: blockTop,
       height: blockHeight,
-      speed: speed,
-      style: style,
-      transform: transform,
+      speed,
+      style,
+      transform,
       zindex: opt.zindex,
-      opt: opt
+      opt
     });
 
     // elements.push(el)
   };
 
-  var updatePosition = function updatePosition(percentage, speed, round) {
-    var value = speed * (100 * (1 - percentage));
+  var updatePosition = function(percentage, speed, round) {
+    var value = (speed * (100 * (1 - percentage)));
     return round ? Math.round(value * 10) / 10 : value;
   };
 
-  api.animate = function (id) {
-    var targets = elements;
+  api.animate = id => {
+    let targets = elements;
     if (typeof id === 'number') {
       targets = [elements[id]];
     }
 
-    if (!targets) return;
+    if (!targets)
+      return
 
-    targets.forEach(function (item) {
+    targets.forEach(item => {
       // console.log(item)
-      var percentage = (posY - item.top + screenY) / (item.height + screenY);
-
+      var percentage = ((posY - item.top + screenY) / (item.height + screenY));
+      
       var position = updatePosition(percentage, item.speed, item.opt.round) - item.base;
 
       var zindex = item.zindex;
@@ -146,75 +154,82 @@ var parallaxjs = function parallaxjs() {
     });
   };
 
-  return api;
+  return api
 };
 
-var VueParallaxJs = {
-  install: function install(Vue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+var VueParallaxJs = {
+  install (Vue, options = {}) {
     var p = parallaxjs(options);
     p.setPageScroll();
     p.setPageY();
-
-    window.addEventListener('scroll', function () {
-      p.loop(function (_) {
-        p.loop(function (_) {
+    
+    window.addEventListener('scroll', () => {
+      p.loop(_ => {
+        p.loop(_ => {
           p.setPageScroll();
           p.animate();
         });
       });
-    }, { passive: true });
-    window.addEventListener('resize', function () {
-      p.loop(function (_) {
-        p.loop(function (_) {
+    }, {passive: true});
+    window.addEventListener('resize', () => {
+      p.loop(_ => {
+        p.loop(_ => {
           p.setPageScroll();
           p.setPageY();
           p.animate();
         });
       });
-    }, { passive: true });
+    }, {passive: true});
 
     Vue.prototype.$parallaxjs = p;
     window.$parallaxjs = p;
 
     Vue.directive('parallax', {
-      bind: function bind(el, binding) {},
-      inserted: function inserted(el, binding) {
-        var id = p.addElement(el, binding);
+      bind (el, binding) {
+      },
+      inserted (el, binding) {
+        let id = p.addElement(el, binding);
         p.animate(id);
-      }
-    }
-    // unbind(el, binding) {
-    //   p.resetPosition(el)
-    // }
-    // bind: parallaxjs.add(parallaxjs),
-    // update(value) {
-    //  parallaxjs.update(value)
-    // },
-    // update(el, binding) {
-    //   console.log("cup");
-    // },
-    );
+      },
+      // unbind(el, binding) {
+      //   p.resetPosition(el)
+      // }
+      // bind: parallaxjs.add(parallaxjs),
+      // update(value) {
+      //  parallaxjs.update(value)
+      // },
+      // update(el, binding) {
+      //   console.log("cup");
+      // },
+    });
   }
 };
 
 // import Vue and vue-parallax-js
+// add vue-parallax-js to vue
 Vue.use(VueParallaxJs);
 
 new Vue({
   el: '#app',
-  data: function data() {
+  data() {
     return {
       title: 'Smooth and Simple Parallax for Vue',
-      lines: [{ dots: 1 }, { dots: 2 }, { dots: 3 }, { dots: 4 }, { dots: 5 }]
-    };
+      lines: [
+        {dots: 1},
+        {dots: 2},
+        {dots: 3},
+        {dots: 4},
+        {dots: 5},
+      ]
+    }
   },
-  created: function created() {
-    this.lines.map(function (line) {
-      var c = line.dots;
+
+  created() {
+    this.lines.map(line => {
+      let c = line.dots;
       line.dots = [];
-      for (var i = 0; i < c; i++) {
+      for (let i = 0; i < c; i++) {
         line.dots.push('');
       }
     });
