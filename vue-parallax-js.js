@@ -22,6 +22,8 @@ parallaxjs.prototype = {
 
     if (style.display === 'none') return;
 
+    el.classList.add('parallaxed');
+
     var height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
     this.items.push({
       el: el,
