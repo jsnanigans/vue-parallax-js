@@ -77,8 +77,10 @@ let parallaxjs = function (options = {}) {
     var blockHeight = el.clientHeight || el.offsetHeight || el.scrollHeight;
     var percentage = opt.percentage ? opt.percentage : (posY - blockTop + screenY) / (blockHeight + screenY);
     if(opt.center){ percentage = 0.5; }
-    
-    var speed = opt.speed ? clamp(opt.speed, -10, 10) : opt.speed;
+    var speed = opt.speed * 10;
+
+    speed = speed ? clamp(speed, -13, 13) : speed;
+
     if (opt.percentage || opt.center) {
       speed = clamp(opt.speed || opt.speed, -5, 5);
     }
@@ -101,7 +103,7 @@ let parallaxjs = function (options = {}) {
     }
     // console.log(initialMatrix)
     // let initialTransform = {
-    //   rotate: 
+    //   rotate:
     // }
 
 
@@ -120,7 +122,7 @@ let parallaxjs = function (options = {}) {
         transform = ' ' + trimmedStyle.slice(11).replace(/\s/g,'');
       }
 
-      
+
     }
 
     elements.push({
@@ -156,7 +158,7 @@ let parallaxjs = function (options = {}) {
     targets.forEach(item => {
       // console.log(item)
       var percentage = ((posY - item.top + screenY) / (item.height + screenY));
-      
+
       var position = updatePosition(percentage, item.speed, item.opt.round) - item.base;
 
       let values = item.initialMatrix;
@@ -177,7 +179,7 @@ var VueParallaxJs = {
     var p = parallaxjs(options);
     p.setPageScroll();
     p.setPageY();
-    
+
     window.addEventListener('scroll', () => {
       p.loop(_ => {
         p.loop(_ => {
