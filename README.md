@@ -34,8 +34,9 @@ Vue.use(VueParallaxJs, options)
 
 ```javascript
 const options = {
-	minWidth: Number, // minumum window width for parallax to take effect
-	className: String, // this class gets added to all elements that are being animated, by default: 'vueParallax'
+  minWidth: Number,   /* minumum window width for parallax to take effect */
+  className: String,  /* this class gets added to all elements
+                      that are being animated, by default: 'vueParallax' */
 }
 ```
 
