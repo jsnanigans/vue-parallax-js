@@ -2,12 +2,15 @@
   "name": "vue-parallax-js",
   "version": "0.0.4",
   "description": "Vue component for easy parallax with directive",
-  "main": "vue-parallax-js.js",
+  "main": "./lib/vue-parallax-js.cjs.js",
+  "module": "./lib/vue-parallax-js.es.js",
+  "jsnext:main": "./lib/vue-parallax-js.es.js",
   "directories": {
-    "doc": "docs"
+    "lib": "lib"
   },
   "scripts": {
-    "build": "node node_modules/babel-cli/bin/babel src/vue-parallax-js.js --out-file ./vue-parallax-js.js"
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js -w"
   },
   "repository": {
     "type": "git",
@@ -29,9 +32,18 @@
     "babel-core": "^6.26.0",
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-env": "^1.6.1"
-  },
-  "dependencies": {
-    "babel-cli": "^6.26.0"
+    "babel-preset-env": "^1.6.1",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-flow": "^1.1.1",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "uglify-es": "^3.2.0"
   }
 }
