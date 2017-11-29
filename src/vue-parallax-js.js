@@ -1,5 +1,4 @@
 // @flow
-
 let ParallaxJS = function (options) {
   this.options = options
 }
@@ -8,17 +7,19 @@ ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  setStyle (item: Object, value: string) {
-    if (item.modifiers.centerX) {
-      value += ' translateX(-50%)'
+  // helper functions
+  transformProp: window.transformProp || (function () {
+    var testEl = document.createElement('div')
+    if (testEl.style.transform == null) {
+      var vendors = ['Webkit', 'Moz', 'ms']
+      for (var vendor in vendors) {
+        if (testEl.style[ vendors[vendor] + 'Transform' ] !== undefined) {
+          return vendors[vendor] + 'Transform'
+        }
+      }
     }
-
-    let el = item.el
-    let prop = 'Transform'
-    el.style['webkit' + prop] = value
-    el.style['moz' + prop] = value
-    el.style['ms' + prop] = value
-  },
+    return 'transform'
+  })(),
 
   add (el, binding) {
     let value = binding.value
@@ -28,6 +29,9 @@ ParallaxJS.prototype = {
     if (style.display === 'none') return
 
     let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight
+
+    el.classList.add(this.options.className || 'vueParallax')
+
     this.items.push({
       el: el,
       initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
@@ -44,7 +48,7 @@ ParallaxJS.prototype = {
     if (!this.active) return
     if (window.innerWidth < this.options.minWidth || 0) {
       this.items.forEach((item) => {
-        this.setStyle(item, 'translateY(' + 0 + 'px) translateZ(0px)')
+        item.el.style[this.transformProp] = `tranlateY(0)`
       })
 
       return
@@ -68,7 +72,11 @@ ParallaxJS.prototype = {
 
       pos = pos.toFixed(2)
 
-      this.setStyle(item, 'translateY(' + pos + 'px)')
+      window.requestAnimationFrame(() => {
+        const cx = item.modifiers.centerX ? '-50%' : '0px'
+        const props = `translate3d(${cx},${pos}px,0px)`
+        item.el.style[this.transformProp] = props
+      })
     })
   }
 }
@@ -78,14 +86,10 @@ export default {
     var p = new ParallaxJS(options)
 
     window.addEventListener('scroll', () => {
-      requestAnimationFrame(() => {
-        p.move(p)
-      })
+      p.move(p)
     }, {passive: true})
     window.addEventListener('resize', () => {
-      requestAnimationFrame(() => {
-        p.move(p)
-      })
+      p.move(p)
     }, {passive: true})
 
     Vue.prototype.$parallaxjs = p
