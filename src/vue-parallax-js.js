@@ -1,5 +1,5 @@
 // @flow
-let ParallaxJS = function (options) {
+const ParallaxJS = function (options) {
   this.options = options
 }
 
@@ -22,13 +22,13 @@ ParallaxJS.prototype = {
   })(),
 
   add (el, binding) {
-    let value = binding.value
-    let arg = binding.arg
-    let style = el.currentStyle || window.getComputedStyle(el)
+    const value = binding.value
+    const arg = binding.arg
+    const style = el.currentStyle || window.getComputedStyle(el)
 
     if (style.display === 'none') return
 
-    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight
+    const height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight
 
     el.classList.add(this.options.className || 'vueParallax')
 
@@ -54,12 +54,12 @@ ParallaxJS.prototype = {
       return
     }
 
-    let scrollTop = window.scrollY || window.pageYOffset
-    let windowHeight = window.innerHeight
+    const scrollTop = window.scrollY || window.pageYOffset
+    const windowHeight = window.innerHeight
 
     this.items.forEach((item) => {
       let pos = (scrollTop + windowHeight)
-      let elH = item.clientHeight
+      const elH = item.clientHeight
 
       pos = pos - (elH / 2)
       pos = pos - (windowHeight / 2)
@@ -87,10 +87,10 @@ export default {
 
     window.addEventListener('scroll', () => {
       p.move(p)
-    }, {passive: true})
+    }, { passive: true })
     window.addEventListener('resize', () => {
       p.move(p)
-    }, {passive: true})
+    }, { passive: true })
 
     Vue.prototype.$parallaxjs = p
     window.$parallaxjs = p
