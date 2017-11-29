@@ -1,7 +1,7 @@
 {
   "name": "vue-parallax-js",
   "version": "0.0.5",
-  "description": "Tiny vue directive for parallax effect on elements",
+  "description": "Tiny vue component that adds a directive for parallax effect on elements.",
   "main": "./lib/vue-parallax-js.cjs.js",
   "module": "./lib/vue-parallax-js.es.js",
   "jsnext:main": "./lib/vue-parallax-js.es.js",

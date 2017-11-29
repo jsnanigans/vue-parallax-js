@@ -1,8 +1,8 @@
 # vue-parallax-js
-Tiny vue directive for parallax effect on elements.
+Tiny vue component that adds a directive for parallax effect on elements.
 - no dependencies.
 - lightweight
-- 1.5 kb minified
+- 1.7 kb minified
 
 ## Setup
 ```bash
@@ -36,7 +36,7 @@ Vue.use(VueParallaxJs, options)
 const options = {
   minWidth: Number,   /* minumum window width for parallax to take effect */
   className: String,  /* this class gets added to all elements
-                      that are being animated, by default: 'vueParallax' */
+                      that are being animated, by default none */
 }
 ```
 

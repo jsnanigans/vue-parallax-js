@@ -1,20 +1,20 @@
 // @flow
-const ParallaxJS = function (options) {
-  this.options = options
+const ParallaxJS = function (os) {
+  this.os = os
 }
 
 ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  // helper functions
-  transformProp: window.transformProp || (function () {
-    var testEl = document.createElement('div')
+  tProp: window.transformProp || (function () {
+    const testEl = document.createElement('div')
     if (testEl.style.transform == null) {
-      var vendors = ['Webkit', 'Moz', 'ms']
-      for (var vendor in vendors) {
-        if (testEl.style[ vendors[vendor] + 'Transform' ] !== undefined) {
-          return vendors[vendor] + 'Transform'
+      const vs = ['Webkit', 'Moz', 'ms']
+      const t = 'Transform'
+      for (const v of vs) {
+        if (testEl.style[ v + t ] !== undefined) {
+          return v + t
         }
       }
     }
@@ -25,65 +25,56 @@ ParallaxJS.prototype = {
     const value = binding.value
     const arg = binding.arg
     const style = el.currentStyle || window.getComputedStyle(el)
+    const mod = binding.modifiers
 
     if (style.display === 'none') return
 
-    const height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight
+    const height = mod.absY ? window.innerHeight : el.clientHeight || el.scrollHeight
 
-    el.classList.add(this.options.className || 'vueParallax')
+    el.classList.add(this.os.className || '')
 
     this.items.push({
       el: el,
-      initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
+      iOT: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
       style,
       value,
       arg,
-      modifiers: binding.modifiers,
-      clientHeight: height,
+      mod,
+      height,
       count: 0
     })
   },
 
   move () {
     if (!this.active) return
-    if (window.innerWidth < this.options.minWidth || 0) {
+    if (window.innerWidth < this.os.minWidth || 0) {
       this.items.forEach((item) => {
-        item.el.style[this.transformProp] = `tranlateY(0)`
+        item.el.style[this.tProp] = ``
       })
 
       return
     }
 
-    const scrollTop = window.scrollY || window.pageYOffset
-    const windowHeight = window.innerHeight
+    const sT = window.scrollY || window.pageYOffset
+    const wH = window.innerHeight
 
     this.items.forEach((item) => {
-      let pos = (scrollTop + windowHeight)
-      const elH = item.clientHeight
-
-      pos = pos - (elH / 2)
-      pos = pos - (windowHeight / 2)
-      pos = pos * item.value
-
-      let offset = item.initialOffsetTop
-      offset = offset * -1
-      offset = offset * item.value
-      pos = pos + offset
-
-      pos = pos.toFixed(2)
+      const elH = item.height
+      const offset = item.iOT * -1 * item.value
+      const pos = (((sT + wH) - (elH / 2) - (wH / 2)) * item.value) + offset
 
       window.requestAnimationFrame(() => {
-        const cx = item.modifiers.centerX ? '-50%' : '0px'
-        const props = `translate3d(${cx},${pos}px,0px)`
-        item.el.style[this.transformProp] = props
+        const cx = item.mod.centerX ? '-50%' : '0px'
+        const props = `translate3d(${cx},${pos.toFixed(3)}px,0px)`
+        item.el.style[this.tProp] = props
       })
     })
   }
 }
 
 export default {
-  install (Vue, options = {}) {
-    var p = new ParallaxJS(options)
+  install (Vue, os = {}) {
+    var p = new ParallaxJS(os)
 
     window.addEventListener('scroll', () => {
       p.move(p)
