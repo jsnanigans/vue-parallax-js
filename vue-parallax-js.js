@@ -1,94 +1,92 @@
-var parallaxjs = function parallaxjs(options) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+let ParallaxJS = function (options) {
   this.options = options;
 };
 
-parallaxjs.prototype = {
+ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  setStyle: function setStyle(item, value) {
-    if (item.modifiers.centerX) value += ' translateX(-50%)';
+  setStyle(item, value) {
+    if (item.modifiers.centerX) {
+      value += ' translateX(-50%)';
+    }
 
-    var el = item.el;
-    var prop = 'Transform';
-    el.style["webkit" + prop] = value;
-    el.style["moz" + prop] = value;
-    el.style["ms" + prop] = value;
+    let el = item.el;
+    let prop = 'Transform';
+    el.style['webkit' + prop] = value;
+    el.style['moz' + prop] = value;
+    el.style['ms' + prop] = value;
   },
-  add: function add(el, binding) {
-    var value = binding.value;
-    var arg = binding.arg;
-    var style = el.currentStyle || window.getComputedStyle(el);
+
+  add(el, binding) {
+    let value = binding.value;
+    let arg = binding.arg;
+    let style = el.currentStyle || window.getComputedStyle(el);
 
     if (style.display === 'none') return;
 
-    var height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
+    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
     this.items.push({
       el: el,
       initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
-      style: style,
-      value: value,
-      arg: arg,
+      style,
+      value,
+      arg,
       modifiers: binding.modifiers,
       clientHeight: height,
       count: 0
     });
   },
-  move: function move() {
-    var _this = this;
 
+  move() {
     if (!this.active) return;
     if (window.innerWidth < this.options.minWidth || 0) {
-      this.items.map(function (item) {
-        _this.setStyle(item, 'translateY(' + 0 + 'px) translateZ(0px)');
+      this.items.map(item => {
+        this.setStyle(item, 'translateY(' + 0 + 'px) translateZ(0px)');
       });
 
       return;
     }
 
-    var scrollTop = window.scrollY || window.pageYOffset;
-    var windowHeight = window.innerHeight;
-    var windowWidth = window.innerWidth;
+    let scrollTop = window.scrollY || window.pageYOffset;
+    let windowHeight = window.innerHeight;
 
-    this.items.map(function (item) {
-      var pos = scrollTop + windowHeight;
-      var elH = item.clientHeight;
-      // if (item.count > 50) {
-      //   item.count = 0;
-      //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-      // }
-
+    this.items.map(item => {
+      let pos = scrollTop + windowHeight;
+      let elH = item.clientHeight;
 
       pos = pos - elH / 2;
       pos = pos - windowHeight / 2;
       pos = pos * item.value;
 
-      var offset = item.initialOffsetTop;
+      let offset = item.initialOffsetTop;
       offset = offset * -1;
       offset = offset * item.value;
       pos = pos + offset;
 
       pos = pos.toFixed(2);
 
-      // item.count++
-      _this.setStyle(item, 'translateY(' + pos + 'px)');
+      this.setStyle(item, 'translateY(' + pos + 'px)');
     });
   }
 };
 
-export default {
-  install: function install(Vue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+exports.default = {
+  install(Vue, options = {}) {
+    var p = new ParallaxJS(options);
 
-    var p = new parallaxjs(options);
-
-    window.addEventListener('scroll', function () {
-      requestAnimationFrame(function () {
+    window.addEventListener('scroll', () => {
+      requestAnimationFrame(() => {
         p.move(p);
       });
     }, { passive: true });
-    window.addEventListener('resize', function () {
-      requestAnimationFrame(function () {
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(() => {
         p.move(p);
       });
     }, { passive: true });
@@ -96,22 +94,11 @@ export default {
     Vue.prototype.$parallaxjs = p;
     window.$parallaxjs = p;
     Vue.directive('parallax', {
-      bind: function bind(el, binding) {},
-      inserted: function inserted(el, binding) {
+      bind(el, binding) {},
+      inserted(el, binding) {
         p.add(el, binding);
         p.move(p);
       }
-    }
-    // unbind(el, binding) {
-    //   p.remove(el)
-    // }
-    // bind: parallaxjs.add(parallaxjs),
-    // update(value) {
-    //  parallaxjs.update(value)
-    // },
-    // update(el, binding) {
-    //   console.log("cup");
-    // },
-    );
+    });
   }
 };

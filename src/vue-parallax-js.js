@@ -1,30 +1,33 @@
-let parallaxjs = function (options) {
+// @flow
+
+let ParallaxJS = function (options) {
   this.options = options
 }
 
-parallaxjs.prototype = {
+ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  setStyle (item, value) {
-    if (item.modifiers.centerX)
+  setStyle (item: Object, value: string) {
+    if (item.modifiers.centerX) {
       value += ' translateX(-50%)'
+    }
 
-    let el = item.el;
-    let prop = 'Transform';
-    el.style["webkit" + prop] = value;
-    el.style["moz" + prop] = value;
-    el.style["ms" + prop] = value;
+    let el = item.el
+    let prop = 'Transform'
+    el.style['webkit' + prop] = value
+    el.style['moz' + prop] = value
+    el.style['ms' + prop] = value
   },
 
   add (el, binding) {
     let value = binding.value
     let arg = binding.arg
-    let style = el.currentStyle || window.getComputedStyle(el);
+    let style = el.currentStyle || window.getComputedStyle(el)
 
     if (style.display === 'none') return
 
-    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
+    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight
     this.items.push({
       el: el,
       initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
@@ -49,37 +52,30 @@ parallaxjs.prototype = {
 
     let scrollTop = window.scrollY || window.pageYOffset
     let windowHeight = window.innerHeight
-    let windowWidth = window.innerWidth
 
     this.items.map((item) => {
-        let pos = (scrollTop + windowHeight)
-        let elH = item.clientHeight
-        // if (item.count > 50) {
-        //   item.count = 0;
-        //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-        // }
+      let pos = (scrollTop + windowHeight)
+      let elH = item.clientHeight
 
+      pos = pos - (elH / 2)
+      pos = pos - (windowHeight / 2)
+      pos = pos * item.value
 
-        pos = pos - (elH / 2)
-        pos = pos - (windowHeight / 2)
-        pos = pos * item.value
+      let offset = item.initialOffsetTop
+      offset = offset * -1
+      offset = offset * item.value
+      pos = pos + offset
 
-        let offset = item.initialOffsetTop
-        offset = offset * -1
-        offset = offset * item.value
-        pos = pos + offset
+      pos = pos.toFixed(2)
 
-        pos = pos.toFixed(2)
-
-        // item.count++
-        this.setStyle(item, 'translateY(' + pos + 'px)')
+      this.setStyle(item, 'translateY(' + pos + 'px)')
     })
   }
 }
 
 export default {
   install (Vue, options = {}) {
-    var p = new parallaxjs(options)
+    var p = new ParallaxJS(options)
 
     window.addEventListener('scroll', () => {
       requestAnimationFrame(() => {
@@ -100,17 +96,7 @@ export default {
       inserted (el, binding) {
         p.add(el, binding)
         p.move(p)
-      },
-      // unbind(el, binding) {
-      //   p.remove(el)
-      // }
-      // bind: parallaxjs.add(parallaxjs),
-      // update(value) {
-      //  parallaxjs.update(value)
-      // },
-      // update(el, binding) {
-      //   console.log("cup");
-      // },
+      }
     })
   }
 }
