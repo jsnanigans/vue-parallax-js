@@ -43,7 +43,7 @@ ParallaxJS.prototype = {
   move () {
     if (!this.active) return
     if (window.innerWidth < this.options.minWidth || 0) {
-      this.items.map((item) => {
+      this.items.forEach((item) => {
         this.setStyle(item, 'translateY(' + 0 + 'px) translateZ(0px)')
       })
 
@@ -53,7 +53,7 @@ ParallaxJS.prototype = {
     let scrollTop = window.scrollY || window.pageYOffset
     let windowHeight = window.innerHeight
 
-    this.items.map((item) => {
+    this.items.forEach((item) => {
       let pos = (scrollTop + windowHeight)
       let elH = item.clientHeight
 
