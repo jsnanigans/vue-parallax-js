@@ -47,9 +47,10 @@ ParallaxJS.prototype = {
 
   move () {
     if (!this.active) return
-    if (window.innerWidth < this.os.minWidth || 0) {
-      this.items.forEach((item) => {
-        item.el.style[this.tProp] = ``
+    debugger;
+    if (window.innerWidth < this.options.minWidth || 0) {
+      this.items.map((item) => {
+        this.setStyle(item, 'translateY(' + 0 + 'px) translateZ(0px)')
       })
 
       return
