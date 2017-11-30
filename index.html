@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>VueParallaxJS Demo Page</title>
+
+  <script src="https://unpkg.com/vue@2.5.9/dist/vue.min.js"></script>
+  <script src="/lib/vue-parallax-js.js"></script>
+
+  <style>
+    #app {
+      height: 200vh;
+      text-align: center;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1 v-parallax.absY=".5">vue-parallax-js</h1>
+    <h1 v-parallax.absY=".8">vue-parallax-js</h1>
+  </div>
+
+  <script>
+    Vue.use(ParallaxJS)
+    var app = new Vue({
+      el: '#app'
+    })
+  </script>
+</body>
+</html>

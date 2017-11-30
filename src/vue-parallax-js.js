@@ -1,38 +1,46 @@
-let parallaxjs = function (options) {
-  this.options = options
+// @flow
+const ParallaxJS = function (os) {
+  this.os = os
 }
 
-parallaxjs.prototype = {
+ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  setStyle (item, value) {
-    if (item.modifiers.centerX)
-      value += ' translateX(-50%)'
-
-    let el = item.el;
-    let prop = 'Transform';
-    el.style["webkit" + prop] = value;
-    el.style["moz" + prop] = value;
-    el.style["ms" + prop] = value;
-  },
+  tProp: window.transformProp || (function () {
+    const testEl = document.createElement('div')
+    if (testEl.style.transform == null) {
+      const vs = ['Webkit', 'Moz', 'ms']
+      const t = 'Transform'
+      for (const v of vs) {
+        if (testEl.style[ v + t ] !== undefined) {
+          return v + t
+        }
+      }
+    }
+    return 'transform'
+  })(),
 
   add (el, binding) {
-    let value = binding.value
-    let arg = binding.arg
-    let style = el.currentStyle || window.getComputedStyle(el);
+    const value = binding.value
+    const arg = binding.arg
+    const style = el.currentStyle || window.getComputedStyle(el)
+    const mod = binding.modifiers
 
     if (style.display === 'none') return
 
-    let height = binding.modifiers.absY ? window.innerHeight : el.clientHeight || el.offsetHeight || el.scrollHeight;
+    const height = mod.absY ? window.innerHeight : el.clientHeight || el.scrollHeight
+
+    el.classList.add(this.os.className || '')
+
     this.items.push({
       el: el,
-      initialOffsetTop: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
+      iOT: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
       style,
       value,
       arg,
-      modifiers: binding.modifiers,
-      clientHeight: height,
+      mod,
+      height,
       count: 0
     })
   },
@@ -48,50 +56,33 @@ parallaxjs.prototype = {
       return
     }
 
-    let scrollTop = window.scrollY || window.pageYOffset
-    let windowHeight = window.innerHeight
-    let windowWidth = window.innerWidth
+    const sT = window.scrollY || window.pageYOffset
+    const wH = window.innerHeight
 
-    this.items.map((item) => {
-        let pos = (scrollTop + windowHeight)
-        let elH = item.clientHeight
-        // if (item.count > 50) {
-        //   item.count = 0;
-        //   elH = item.el.clientHeight || item.el.offsetHeight || item.el.scrollHeight
-        // }
+    this.items.forEach((item) => {
+      const elH = item.height
+      const offset = item.iOT * -1 * item.value
+      const pos = (((sT + wH) - (elH / 2) - (wH / 2)) * item.value) + offset
 
-
-        pos = pos - (elH / 2)
-        pos = pos - (windowHeight / 2)
-        pos = pos * item.value
-
-        let offset = item.initialOffsetTop
-        offset = offset * -1
-        offset = offset * item.value
-        pos = pos + offset
-
-        pos = pos.toFixed(2)
-
-        // item.count++
-        this.setStyle(item, 'translateY(' + pos + 'px)')
+      window.requestAnimationFrame(() => {
+        const cx = item.mod.centerX ? '-50%' : '0px'
+        const props = `translate3d(${cx},${pos.toFixed(3)}px,0px)`
+        item.el.style[this.tProp] = props
+      })
     })
   }
 }
 
 export default {
-  install (Vue, options = {}) {
-    var p = new parallaxjs(options)
+  install (Vue, os = {}) {
+    var p = new ParallaxJS(os)
 
     window.addEventListener('scroll', () => {
-      requestAnimationFrame(() => {
-        p.move(p)
-      })
-    }, {passive: true})
+      p.move(p)
+    }, { passive: true })
     window.addEventListener('resize', () => {
-      requestAnimationFrame(() => {
-        p.move(p)
-      })
-    }, {passive: true})
+      p.move(p)
+    }, { passive: true })
 
     Vue.prototype.$parallaxjs = p
     window.$parallaxjs = p
@@ -101,17 +92,7 @@ export default {
       inserted (el, binding) {
         p.add(el, binding)
         p.move(p)
-      },
-      // unbind(el, binding) {
-      //   p.remove(el)
-      // }
-      // bind: parallaxjs.add(parallaxjs),
-      // update(value) {
-      //  parallaxjs.update(value)
-      // },
-      // update(el, binding) {
-      //   console.log("cup");
-      // },
+      }
     })
   }
 }
