@@ -31,7 +31,10 @@ ParallaxJS.prototype = {
 
     const height = mod.absY ? window.innerHeight : el.clientHeight || el.scrollHeight
 
-    el.classList.add(this.os.className || '')
+    const cl = this.os.className
+    if (typeof cl === 'string') {
+      el.className = `${el.className} ${cl}`.trim()
+    }
 
     this.items.push({
       el: el,

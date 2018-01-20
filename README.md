@@ -2,7 +2,7 @@
 Tiny vue component that adds a directive for parallax effect on elements.
 - no dependencies.
 - lightweight
-- 1.7 kb minified
+- under 2 kb minified
 
 ## Setup
 ```bash
