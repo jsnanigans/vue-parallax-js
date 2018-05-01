@@ -47,7 +47,14 @@ ParallaxJS.prototype = {
       count: 0
     })
   },
-
+  update() {
+    this.items.forEach(function(item) {
+      let t = item.el;
+      n = t.currentStyle || window.getComputedStyle(t);
+      item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
+      item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
+    })
+  },
   move () {
     if (!this.active) return
     if (window.innerWidth < this.os.minWidth || 0) {
@@ -83,6 +90,7 @@ export default {
       p.move(p)
     }, { passive: true })
     window.addEventListener('resize', () => {
+      p.update()
       p.move(p)
     }, { passive: true })
 
