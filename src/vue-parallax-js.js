@@ -50,6 +50,7 @@ ParallaxJS.prototype = {
   update() {
     this.items.forEach(function(item) {
       let t = item.el;
+      let n;
       n = t.currentStyle || window.getComputedStyle(t);
       item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
       item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
