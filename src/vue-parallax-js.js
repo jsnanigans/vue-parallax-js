@@ -1,4 +1,12 @@
 // @flow
+if (typeof window === 'undefined') {
+  global.window = null
+}
+
+if (typeof document === 'undefined') {
+  global.document = null
+}
+
 const ParallaxJS = function (os) {
   this.os = os
 }
@@ -7,9 +15,9 @@ ParallaxJS.prototype = {
   items: [],
   active: true,
 
-  tProp: window.transformProp || (function () {
-    const testEl = document.createElement('div')
-    if (testEl.style.transform == null) {
+  tProp: window && window.transformProp || (function () {
+    const testEl = document ? document.createElement('div') : null
+    if (testEl && testEl.style.transform == null) {
       const vs = ['Webkit', 'Moz', 'ms']
       const t = 'Transform'
       for (const v of vs) {
@@ -22,6 +30,7 @@ ParallaxJS.prototype = {
   })(),
 
   add (el, binding) {
+    if (!window) return
     const value = binding.value
     const arg = binding.arg
     const style = el.currentStyle || window.getComputedStyle(el)
@@ -47,15 +56,17 @@ ParallaxJS.prototype = {
       count: 0
     })
   },
-  update() {
-    this.items.forEach(function(item) {
-      let t = item.el;
-      n = t.currentStyle || window.getComputedStyle(t);
+  update () {
+    if (!window) return
+    this.items.forEach(function (item) {
+      const t = item.el
+      const n = t.currentStyle || window.getComputedStyle(t)
       item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
       item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
     })
   },
   move () {
+    if (!window) return
     if (!this.active) return
     if (window.innerWidth < this.os.minWidth || 0) {
       this.items.forEach((item) => {
@@ -84,7 +95,8 @@ ParallaxJS.prototype = {
 
 export default {
   install (Vue, os = {}) {
-    var p = new ParallaxJS(os)
+    if (!window) return
+    const p = new ParallaxJS(os)
 
     window.addEventListener('scroll', () => {
       p.move(p)
