@@ -99,6 +99,7 @@ export default {
     const p = new ParallaxJS(os)
 
     window.addEventListener('scroll', () => {
+      p.update()
       p.move(p)
     }, { passive: true })
     window.addEventListener('resize', () => {
