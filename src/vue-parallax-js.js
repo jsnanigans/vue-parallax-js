@@ -29,6 +29,14 @@ ParallaxJS.prototype = {
     return 'transform'
   })(),
 
+  remove(el, binding) {
+    for(let item of this.items){
+      if(item.el === el){
+        this.items.splice(this.items.indexOf(el), 1)
+      }
+    }
+  },
+
   add (el, binding) {
     if (!window) return
     const value = binding.value
@@ -61,8 +69,12 @@ ParallaxJS.prototype = {
     this.items.forEach(function (item) {
       const t = item.el
       const n = t.currentStyle || window.getComputedStyle(t)
+      
       item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
-      item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
+      if(t.offsetParent !== null)
+        item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
+      
+      
     })
   },
   move () {
@@ -114,6 +126,9 @@ export default {
       inserted (el, binding) {
         p.add(el, binding)
         p.move(p)
+      },
+      unbind(el, binding){
+        p.remove(el, binding)
       }
     })
   }
