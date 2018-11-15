@@ -9,6 +9,12 @@ if (typeof document === 'undefined') {
 
 const ParallaxJS = function (os) {
   this.os = os
+
+  this.container = null
+
+  this._bindContainer = () => {
+    this.container = document.querySelector(this.os.container)
+  }
 }
 
 ParallaxJS.prototype = {
@@ -84,11 +90,11 @@ ParallaxJS.prototype = {
       this.items.forEach((item) => {
         item.el.style[this.tProp] = ``
       })
-
+ 
       return
     }
 
-    const sT = window.scrollY || window.pageYOffset
+    const sT = this.container ? this.container.scrollTop : window.scrollY || window.pageYOffset
     const wH = window.innerHeight
 
     this.items.forEach((item) => {
@@ -110,9 +116,24 @@ export default {
     if (!window) return
     const p = new ParallaxJS(os)
 
-    window.addEventListener('scroll', () => {
-      p.move(p)
-    }, { passive: true })
+    if (os.container) {
+      Vue.mixin({
+        mounted() {
+          if(this.$parent) return
+
+          p._bindContainer()
+
+          p.container.addEventListener('scroll', () => {
+            p.move(p)
+          }, { passive: true })
+        }
+      })
+    } else {
+      window.addEventListener('scroll', () => {
+        p.move(p)
+      }, { passive: true })
+    }
+
     window.addEventListener('resize', () => {
       p.update()
       p.move(p)
