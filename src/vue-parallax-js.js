@@ -124,12 +124,14 @@ export default {
           p._bindContainer()
 
           p.container.addEventListener('scroll', () => {
+            p.update()
             p.move(p)
           }, { passive: true })
         }
       })
     } else {
       window.addEventListener('scroll', () => {
+        p.update()
         p.move(p)
       }, { passive: true })
     }
