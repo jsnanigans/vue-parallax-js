@@ -37,6 +37,7 @@ const options = {
   minWidth: Number,   /* minumum window width for parallax to take effect */
   className: String,  /* this class gets added to all elements
                       that are being animated, by default none */
+  container: String,  /* element that actually scrolls, by default it's window */
 }
 ```
 
