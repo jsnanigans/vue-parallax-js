@@ -1,8 +1,8 @@
 # vue-parallax-js
 Tiny vue component that adds a directive for parallax effect on elements.
-- no dependencies.
+- no dependencies
 - lightweight
-- under 2 kb minified
+- 1.3k gzip
 
 ## Setup
 ```bash
