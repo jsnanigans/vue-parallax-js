@@ -7,6 +7,12 @@ if (typeof document === 'undefined') {
   global.document = null
 }
 
+const parseMargin = (style) => {
+  return typeof style.marginTop === 'undefined' || style.marginTop === 'auto'
+    ? 0
+    : parseInt(style.marginTop, 10)
+}
+
 const ParallaxJS = function (os) {
   this.os = os
 
@@ -61,7 +67,7 @@ ParallaxJS.prototype = {
 
     this.items.push({
       el: el,
-      iOT: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
+      iOT: el.offsetTop + el.offsetParent.offsetTop - parseMargin(style.marginTop),
       style,
       value,
       arg,
@@ -78,7 +84,7 @@ ParallaxJS.prototype = {
       
       item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
       if(t.offsetParent !== null)
-        item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
+        item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseMargin(n.marginTop)
       
       
     })
