@@ -1,11 +1,5 @@
-// @flow
-if (typeof window === 'undefined') {
-  global.window = null
-}
-
-if (typeof document === 'undefined') {
-  global.document = null
-}
+const window = global.window
+const document = global.document
 
 const ParallaxJS = function (os) {
   this.os = os
