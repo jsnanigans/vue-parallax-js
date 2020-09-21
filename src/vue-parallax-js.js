@@ -47,7 +47,8 @@ ParallaxJS.prototype = {
     if (style.display === 'none') return
 
     const height = mod.absY ? window.innerHeight : el.clientHeight || el.scrollHeight
-
+    const width = mod.absY ? window.innerWidth : el.clientWidth || el.scrollWidth
+      
     const cl = this.os.className
     if (typeof cl === 'string') {
       el.className = `${el.className} ${cl}`.trim()
@@ -61,6 +62,7 @@ ParallaxJS.prototype = {
       arg,
       mod,
       height,
+      width,
       count: 0
     })
   },
@@ -71,6 +73,8 @@ ParallaxJS.prototype = {
       const n = t.currentStyle || window.getComputedStyle(t)
       
       item.height = item.mod.absY ? window.innerHeight : t.clientHeight || t.scrollHeight
+      item.width = item.mod.absX ? window.innerWidth : t.clientWidth || t.scrollWidth
+
       if(t.offsetParent !== null)
         item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
       
@@ -90,15 +94,18 @@ ParallaxJS.prototype = {
 
     const sT = this.container ? this.container.scrollTop : window.scrollY || window.pageYOffset
     const wH = window.innerHeight
+    const wW = window.innerWidth
 
     this.items.forEach((item) => {
       const elH = item.height
+      const elW = item.width
       const offset = item.iOT * -1 * item.value
       const pos = (((sT + wH) - (elH / 2) - (wH / 2)) * item.value) + offset
-
+      const posY = (((sT + wW) - (elW / 2) - (wW / 2)) * item.value) + offset
+        
       window.requestAnimationFrame(() => {
         const cx = item.mod.centerX ? '-50%' : '0px'
-        const props = `translate3d(${cx},${pos.toFixed(3)}px,0px)`
+        const props = !item.mod.horizontal ? `translate3d(${cx},${pos.toFixed(3)}px,0px)` : `translate3d(${posY.toFixed(3)}px,0px,0px)`
         item.el.style[this.tProp] = props
       })
     })

@@ -48,5 +48,6 @@ when using the `v-parallax` directive you can also pass some modifiers to config
 ```
 | Modifier | Description |
 |---|---|
+| horizontal | horizontal based parallax |
 | centerX | will add `transform: translateX(-50%)` along with the parallax positioning |
 | absY | uses the window height instead of the element height for the calculations |
