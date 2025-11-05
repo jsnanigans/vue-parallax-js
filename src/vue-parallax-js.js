@@ -32,7 +32,7 @@ ParallaxJS.prototype = {
   remove(el, binding) {
     for(let item of this.items){
       if(item.el === el){
-        this.items.splice(this.items.indexOf(el), 1)
+        this.items.splice(this.items.indexOf(item), 1)
       }
     }
   },
@@ -56,7 +56,7 @@ ParallaxJS.prototype = {
 
     this.items.push({
       el: el,
-      iOT: el.offsetTop + el.offsetParent.offsetTop - parseInt(style.marginTop),
+      iOT: el.offsetTop + (el.offsetParent ? el.offsetParent.offsetTop : 0) - parseInt(style.marginTop),
       style,
       value,
       arg,
@@ -76,7 +76,7 @@ ParallaxJS.prototype = {
       item.width = item.mod.absX ? window.innerWidth : t.clientWidth || t.scrollWidth
 
       if(t.offsetParent !== null)
-        item.iOT = t.offsetTop + t.offsetParent.offsetTop - parseInt(n.marginTop)
+        item.iOT = t.offsetTop + (t.offsetParent ? t.offsetParent.offsetTop : 0) - parseInt(n.marginTop)
       
       
     })
