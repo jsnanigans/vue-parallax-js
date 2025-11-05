@@ -15,5 +15,8 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['html', 'text', 'lcov'],
-  setupFiles: ['<rootDir>/tests/setup.js']
+  setupFiles: ['<rootDir>/tests/setup.js'],
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons']
+  }
 }

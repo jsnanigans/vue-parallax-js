@@ -1,10 +1,7 @@
-import babel from 'rollup-plugin-babel'
-import builtins from 'rollup-plugin-node-builtins'
-import commonjs from 'rollup-plugin-commonjs'
-import resolve from 'rollup-plugin-node-resolve'
-import flow from 'rollup-plugin-flow'
-import uglify from 'rollup-plugin-uglify'
-import { minify } from 'uglify-es'
+import babel from '@rollup/plugin-babel'
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import terser from '@rollup/plugin-terser'
 
 export default {
   input: 'src/vue-parallax-js.js',
@@ -15,7 +12,8 @@ export default {
     },
     {
       file: 'lib/vue-parallax-js.cjs.js',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'default'
     },
     {
       file: 'lib/vue-parallax-js.js',
@@ -23,6 +21,14 @@ export default {
       name: 'ParallaxJS'
     }
   ],
-  plugins: [builtins(), resolve(), flow(), commonjs(), babel(), uglify({}, minify)],
-  external: ['postcss', 'postcss-selector-parser', 'fs']
+  plugins: [
+    resolve(),
+    commonjs(),
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**'
+    }),
+    terser()
+  ],
+  external: ['vue']
 }

@@ -2,39 +2,22 @@
   "env": {
     "test": {
       "presets": [
-        "flow",
-        ["env", {
+        ["@babel/preset-env", {
           "targets": {
             "node": "current"
           }
         }]
-      ],
-      "plugins": [
-        "transform-class-properties",
-        "transform-flow-strip-types"
       ]
     },
     "development": {
-        "presets": [
-          [
-            "flow"
-          ],
-          [
-            "env",
-            {
-              "targets": {
-                "browsers": [
-                    "last 2 versions"
-                ]
-            },
-            "modules": false
-            }
-          ]
-        ],
-        "plugins": [
-            "external-helpers",
-            "transform-class-properties"
-        ]
+      "presets": [
+        ["@babel/preset-env", {
+          "targets": {
+            "browsers": ["last 2 versions", "> 1%", "not dead"]
+          },
+          "modules": false
+        }]
+      ]
     }
   }
 }
